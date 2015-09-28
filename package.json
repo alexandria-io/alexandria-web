@@ -45,6 +45,6 @@
     "nw-gyp": "^0.12.2",
     "tmp": "0.0.23",
     "fs-extra": "0.18.4",
-	"wcjs-player": "git://github.com/jaruba/wcjs-player.git#alexandria"
+    "wcjs-player": "git://github.com/jaruba/wcjs-player.git#alexandria"
   }
 }

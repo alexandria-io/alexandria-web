@@ -925,12 +925,12 @@ function embedArtifact(mediaType, fileHash, mediaFilename, posterFrame) {
 	if (mediaFilename == 'none') {
 		mediaFilename = '';
 	}
-	if ( (mediaType == 'video') || (mediaType == 'movie') || (mediaType == 'music') || (mediaType == 'podcast') ) {
+	if ( ['video','movie','music','podcast'].indexOf(mediaType) > -1 ) {
 		if (!posterFrame) {
 			var posterFrame = '';
 		}
 		$('.row.media-embed').hide();
-		if ( (mediaType == 'music') || (mediaType == 'podcast') ) {
+		if ( ['music','podcast'].indexOf(mediaType) > -1 ) {
 			$('#player').css('height','37px');
 			player.audioMode();
 		} else {
