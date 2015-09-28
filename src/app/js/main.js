@@ -517,7 +517,7 @@ var publishedArtifactSVG = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink=
 // GET ALL PUBLISHERS
 function getAllPublishers() {
 	document.getElementById('publisher-avatar').src = '';
-	$('video').trigger('pause');
+	player.pause();
 	$('#browse-media .module-links a.active').removeClass('active');
 	document.getElementById('intro').style.display = 'none';
 	$('.sharing-ui').hide();
@@ -551,7 +551,7 @@ function getAllPublishers() {
 
 // PUBLISHER SINGLE ENTITY VIEW
 function loadPublisherEntity(obj) {
-	$('video').trigger('pause');
+	player.pause();
 	var publisherNav = $(obj).parents('.publisher-entity').hasClass('publisher-entity');
 	if (publisherNav == true) {
 		var parentObj = $(obj).parents('.publisher-entity');
@@ -842,8 +842,7 @@ function loadArtifactView(objMeta) {
 					});
 				}
 			}
-			var fileEmbed = embedArtifact(mediaType, fileHash, mediaFilename, posterFrame);
-			$('.row.media-embed').html(fileEmbed);
+			embedArtifact(mediaType, fileHash, mediaFilename, posterFrame);
 			if (location.protocol == 'app:') {
 				$('#media-Tid').attr('onclick', 'copyArtifact("http://' + IPFSserver + 'ipfs/'+ fileHash + '","'+process.env.HOME+'/Alexandria-Downloads/'+ fileHash + '")').show();
 			}
@@ -923,21 +922,20 @@ function embedArtifact(mediaType, fileHash, mediaFilename, posterFrame) {
 	if (mediaFilename == 'none') {
 		mediaFilename = '';
 	}
-	if ( (mediaType == 'video') || (mediaType == 'movie') ) {
+	if ( (mediaType == 'video') || (mediaType == 'movie') || (mediaType == 'music') || (mediaType == 'podcast') ) {
 		if (!posterFrame) {
 			var posterFrame = '';
 		}
-//		if (location.protocol == 'app:') {
-//			var embedCode = '<embed type="application/x-vlc-plugin" pluginspage="http://www.videolan.org" target="http://' + IPFSserver +'/ipfs/'+ fileHash +'/'+ encodeURIComponent(mediaFilename) +'" width="640px" height="360px" />';
-//		} else {
-			var embedCode = '<video controls="controls" poster="'+ posterFrame +'"><source src="http://' + IPFSserver +'/ipfs/'+ fileHash +'/'+ encodeURIComponent(mediaFilename) +'" type="video/mp4" /><param name="autoplay" value="true" /></video>';	
-//		}
-	} else if ( (mediaType == 'music') || (mediaType == 'podcast') ) {
-// 		if (location.protocol == 'app:') {
-//			var embedCode = '<embed type="application/x-vlc-plugin" pluginspage="http://www.videolan.org" target="http://' + IPFSserver +'/ipfs/'+ fileHash +'/'+ encodeURIComponent(mediaFilename) +'" width="640px" height="100px" />';
-//		} else {
-			var embedCode = '<audio controls="controls"><source src="http://' + IPFSserver +'/ipfs/'+ fileHash +'/'+ encodeURIComponent(mediaFilename) +'" type="audio/mp3" /></audio>';
-//		}
+		$('.row.media-embed').hide();
+		if ( (mediaType == 'music') || (mediaType == 'podcast') ) {
+			$('#player').css('height','37px');
+			player.audioMode();
+		} else {
+			$('#player').css('height','500px');
+			player.videoMode();
+		}
+		$('#player').show();
+		player.addPlaylist('http://' + IPFSserver +'/ipfs/'+ fileHash +'/'+ encodeURIComponent(mediaFilename));
 	} else if (mediaType == 'book') {
 		var embedCode = '<object data="http://' + IPFSserver +'/ipfs/'+ fileHash + '" type="application/pdf" width="100%" height="800px" class="book-embed"><p>No PDF plugin installed. You can <a href="http://' + IPFSserver +'/ipfs/'+ fileHash +'">click here to download the PDF file.</a></p></object>'
 	} else if (mediaType == 'recipe') {
@@ -945,7 +943,11 @@ function embedArtifact(mediaType, fileHash, mediaFilename, posterFrame) {
 	} else if (mediaType == 'thing') {
 		var embedCode = '<img src="http://' + IPFSserver +'/ipfs/'+fileHash+'" class="large-poster" />';
 	}
-	return embedCode;
+	if (embedCode) {
+		$('#player').hide();
+		$('.row.media-embed').html(embedCode);
+		$('.row.media-embed').show();
+	}
 }
 
 function changeAudioTrack(obj) {
@@ -1113,7 +1115,7 @@ function setMediaTypeFilter(obj, resetSearch) {
 }
 
 function filterMediaByType(obj, resetSearch) {
-	$('video').trigger('pause');
+	player.pause();
 	document.getElementById('intro').style.display = 'none';
 	$('main').not('#browse-media').hide();
 	$('body').append($('#info-modal-media'));
@@ -2193,8 +2195,7 @@ function unlockPWYW(obj, currency) {
 				var mediaType = $('#pwyw-modal .btnLightGray').attr('data-type');
 				var fileHash = $('#pwyw-modal .btnLightGray').attr('data-hash');
 				var mediaFilename = $('#pwyw-modal .btnLightGray').attr('data-file');
-				var fileEmbed = embedArtifact(mediaType, fileHash, mediaFilename);
-				$('.row.media-embed').html(fileEmbed);
+				embedArtifact(mediaType, fileHash, mediaFilename);
 				var mediaTitle = $('.entity-meta-header h2').text();
 				$('#media-Tid').attr('href','magnet:?xt=urn:'+fileHash+'&dn='+escape(mediaTitle)).show();
 				hideOverlay();
@@ -2212,8 +2213,7 @@ function unlockPWYW(obj, currency) {
 				var mediaType = $('#pwyw-modal .btnLightGray').attr('data-type');
 				var fileHash = $('#pwyw-modal .btnLightGray').attr('data-hash');
 				var mediaFilename = $('#pwyw-modal .btnLightGray').attr('data-file');
-				var fileEmbed = embedArtifact(mediaType, fileHash, mediaFilename);
-				$('.row.media-embed').html(fileEmbed);
+				embedArtifact(mediaType, fileHash, mediaFilename);
 				var mediaTitle = $('.entity-meta-header h2').text();
 				$('#media-Tid').attr('href','magnet:?xt=urn:'+fileHash+'&dn='+escape(mediaTitle)).show();
 				hideOverlay();
@@ -2942,7 +2942,7 @@ function loadAlexandria() {
 // RESET INTERFACE
 function resetInterface() {
 	// Reset Interface
-	$('video').trigger('pause');
+	player.pause();
 	document.getElementById('tip-comment').value = '';
 	document.getElementById('viewlabel').style.display = 'none';
 	document.getElementById('disabler').style.display = 'none';
@@ -2971,8 +2971,8 @@ function resetInterface() {
 
 // RESET ALEXANDRIA
 function resetAlexandria() {
-	$('video').trigger('pause');
-	$('audio').trigger('pause');
+	player.stop();
+	player.clearPlaylist();
 	$('main').not('#browse-media').hide();
 	document.getElementById('search-main').value = '';
 	$('#browse-media .module-links a.active').removeClass('active');
@@ -3244,8 +3244,8 @@ function checkConnection() {
 */
 // GO BACK
 function goBack() {
-	$('video').trigger('pause');
-	$('audio').trigger('pause');
+	player.stop();
+	player.clearPlaylist();
 	navCounter--;
 	history.back();
 }

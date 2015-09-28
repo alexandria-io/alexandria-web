@@ -145,6 +145,10 @@ if (location.protocol == 'app:') {
 	process.on('uncaughtException', function (err) {
 		window.console.error(err, err.stack || false);
 	});
+	
+	var wjs = require("wcjs-player");
+	var player = new wjs("#player").addPlayer({});
+	player.stop();
 }
 
 function connectionHandler(className) {
