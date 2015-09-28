@@ -908,9 +908,12 @@ function getTracks(fileHash, mediaInfo, trackCount) {
 			if(mediaInfo['extra-info']['filename']){
 				mediaFilename = mediaInfo['extra-info']['filename'];
 			}
-			$('#media-view-entity .media-desc').append('<ol id="track-list"><li onclick="changeAudioTrack(this)">'+ mediaFilename +'</li></ol>');
+			$('#media-view-entity .media-desc').append('<ol id="track-list"><li onclick="player.playItem(0)">'+ mediaFilename +'</li></ol>');
 		}
-		$('#media-view-entity .media-desc #track-list').append('<li onclick="changeAudioTrack(this)">'+trackFile+'</li>');
+		$('#media-view-entity .media-desc #track-list').append('<li onclick="player.playItem('+(trackCount -1)+')">'+trackFile+'</li>');
+		
+		player.addPlaylist('http://' + IPFSserver +'/ipfs/'+ fileHash +'/'+ encodeURIComponent(trackFile));
+			
 		trackCount++;
 		getTracks(fileHash, mediaInfo, trackCount);
 	} else {
@@ -948,14 +951,6 @@ function embedArtifact(mediaType, fileHash, mediaFilename, posterFrame) {
 		$('.row.media-embed').html(embedCode);
 		$('.row.media-embed').show();
 	}
-}
-
-function changeAudioTrack(obj) {
-	var audioPlayer = $('audio:visible');
-	var fileHash = $('audio:visible source').attr('src').split('/')[4];
-	var trackFile = $(obj).text();
-	$('audio:visible source').attr('src', 'http://' + IPFSserver +'/ipfs/'+ fileHash +'/'+ encodeURIComponent(trackFile));
-	audioPlayer.load();
 }
 
 // CHANGE CUSTOM TIP AMOUNT
