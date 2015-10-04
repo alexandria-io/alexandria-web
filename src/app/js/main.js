@@ -948,22 +948,6 @@ function embedArtifact(mediaType, fileHash, mediaFilename, posterFrame) {
 	return embedCode;
 }
 
-function payWall {
-	var txId = 
-	var ArtistBTCAddress = 
-	$.ajax({
-		type: "POST",
-		url: 'http://'+ serverAddress +':41289/alexandria/v1/search',
-		data: {
-			"protocol":"media",
-			"search-on":"txid",
-			"search-for":"67a0164b7ad1ca0c87e837445cec887bab32873c4f90bede6a03a49c83191f09"
-		},
-		success: ///extract BTC address, save to var=artistBTCAddress,
-		async: false,
-	})	
-	https://blockchain.info/api/receive?method=create&address=16diWTDN8DUxsX994WzyNAotVp36qBqXku
-}
 
 function changeAudioTrack(obj) {
 	var audioPlayer = $('audio:visible');
