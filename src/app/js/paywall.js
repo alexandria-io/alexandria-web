@@ -38,7 +38,7 @@ function payWall() {
 loadQR(dispAddress)    
 //check blockchain for transactions  , if no transactions, check again
 while (amountReceived < artifactCostBtc) 
-    .get('https://blockchain.info/q/getreceivedbyaddress/ + dispAddress {
+    .get('https://blockchain.info/q/getreceivedbyaddress/' + dispAddress {
 	if (data[])
     	    amountReceived = data[]
 
